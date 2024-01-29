@@ -1,0 +1,35 @@
+#!/bin/sh
+
+ends_with()
+{
+  echo $1 | grep -q "$2$"
+  return
+}
+
+STATUS=0
+
+if [ -z $DE_POSTFIX ]
+then
+  DE_POSTFIX=".disable"
+fi
+
+for file in $@
+do
+  if ! ends_with "$file" $DE_POSTFIX
+  then
+    if [ -e $file ]
+    then
+      continue
+    fi
+    file=${file}${DE_POSTFIX}
+  fi
+
+  mv $file `echo $file | sed "s/\${DE_POSTFIX}$//"`
+
+  if [ ! $? -eq "0" ]
+  then
+    STATUS=1
+  fi
+done
+
+exit $STATUS
