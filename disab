@@ -2,28 +2,30 @@
 
 ends_with()
 {
-  echo $1 | grep -q "$2$"
+  echo "$1" | grep -q "$2$"
   return
 }
 
 STATUS=0
 
-if [ -z $DE_POSTFIX ]
+if [ -z "$DE_POSTFIX" ]
 then
   DE_POSTFIX=".disable"
 fi
 
-for file in $@
+while [ "$#" -ne "0" ]
 do
-  if ! ends_with $file $DE_POSTFIX
+  file="$1"
+  if ! ends_with "$file" "$DE_POSTFIX"
   then
 
     if [ -e "${file}${DE_POSTFIX}" ]
     then
+      shift
       continue
     fi
 
-    mv $file "${file}${DE_POSTFIX}"
+    mv "$file" "${file}${DE_POSTFIX}"
 
     if [ ! $? -eq "0" ]
     then
@@ -31,6 +33,7 @@ do
     fi
 
   fi
+  shift
 done
 
 exit $STATUS
